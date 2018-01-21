@@ -1,2 +1,2 @@
 # lowusage-tracking
-Survey and Inventory dashboard system of Low usage server
+created a survey system by using flask
