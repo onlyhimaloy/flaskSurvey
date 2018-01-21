@@ -1,0 +1,117 @@
+<html>
+
+<head>
+<meta charset ='utf-8'>
+<link rel="stylesheet" href="../static/css/main.css">
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %}Low usage Server Survey {% endblock %}
+
+
+{% block navbar %}
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container">
+            <a class="navbar-brand" href="#"> LOW Usage Server List</a>
+        </div>
+    </nav>
+{% endblock %}
+
+</head>
+
+
+<body>
+
+{% block content %}
+
+<div class="container">
+
+<div class="panel panel-primary">
+  <div class="panel-heading">Email Address </div>
+  <h4><div class="panel-body">{{email}}</div></h4>
+</div>
+
+
+    {% for message in get_flashed_messages() %}
+           <div class="alert alert-success">
+	       {{ message }}
+	    </div>
+    {% endfor %}
+
+  {% for row,st in lst %}
+
+
+          <form method="POST" action="" >
+               {{form.hidden_tag()}}
+               {% if hostname == row %}
+                   <div>{{form.ans1.label}}<br>
+                      <div class="alert alert-info">
+		        <strong>{{row}} [Server Group Info/etc]</strong> 
+	              </div>
+                   {{ form.ans1 }}
+                   {% for error in form.ans1.errors %}
+                   <li style="color:red;">{{ error }}</li>
+                   {% endfor %}
+                   </div>
+        
+                  <div>{{form.ans2.label}} </div>
+                  <div>{{ form.ans2 }}
+                       {% for error in form.ans2.errors %}
+                       {{ error }}
+                  <li style="color:red;">{{ error }}</li>
+                       {% endfor %}
+                  </div>
+               
+               {% else %}
+        
+                  <div>{{ form_default.ans1.label }}<br>
+                     <div class="alert alert-info">
+                        <strong>{{row}} [Server Group Info/etc] </strong>
+                     </div>
+                     {{ form_default.ans1 }}
+                      {% for error in form_default.ans1.errors %}
+                      {{ error }}
+                      {% endfor %}
+                  </div>
+        
+                  <div>{{ form_default.ans2.label }} </div>
+                  <div>{{ form_default.ans2 }}</div>
+        
+                   {% for error in form_default.ans2.errors %}
+                   {{ error }}
+                   {% endfor %}
+        
+               {% endif %}
+               
+              <br>
+               {%if st%}
+	       {% for ans in st%}
+                  {% if ans.ans1 %}
+		  <div class="alert alert-success">
+		  <strong>Already Done!, Answer is ={{ans.ans1}} ,Date ={{ans.Ts}}</strong>
+                  </div>  
+	      
+	          {% endif %}
+	        {%endfor%}  
+	
+		{% else %} 
+	        
+		  <div class="alert alert-danger">
+		   <strong>Survey is still Pending !</strong>
+                  </div>
+	                     
+	      {% endif %}
+              <br>
+              <button type="submit" class="btn btn-primary">Submit</button>
+             <input type="hidden" name="hostname" value="{{row}}" />
+             </form>
+           
+  <hr>
+  {% endfor %}
+
+            
+{% endblock %}
+
+</div>
+</body>
+</html>
+

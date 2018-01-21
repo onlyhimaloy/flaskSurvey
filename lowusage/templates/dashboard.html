@@ -1,0 +1,75 @@
+<html>
+
+
+<body>
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_macros.html" as macros  %}
+
+
+{% block title %}Low usage Server{% endblock %}
+
+{% block navbar %}
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container">
+         <a class="navbar-brand" href="#"> Low Usage Server DashBoard</a>
+	</div>    
+    </nav>
+{% endblock %}
+
+
+{% block content %}
+    <div class="container">
+        <h1> Survey Result</h1>
+    <div class="container">
+
+<div class="pagination">
+  {{macros.pagination_widget(pagination, '.dashboard')}}
+</div>    
+
+{# Display Survey data #}
+
+ <table class="table table-hover">
+
+
+    <tr>
+      <th>Hostaname</th>
+      <th>Retrun the Server<br> (1=yes,2=No)</th>
+      <th>Reason & Comment</th>
+      <th>Submited By</th>
+      <th>EmpID</th>
+      <th>Dpartment</th>
+
+      <th>Submit Date</th>
+   </tr>
+
+
+  {% for row in pagination.items %}
+
+    <tr>
+      <td> 
+       {% if row.Ans1 is equalto '2' %}
+         <div class="bg-success test-white">{{row.Hostname}} </div>
+       {% else %}
+         <div class="bg-danger test-white"> {{row.Hostname}} </div>
+       {% endif %}
+      </td>
+
+      <td>{{row.Ans1}}</td>
+      <td>{{row.Ans2}}</td>
+      <td>{{row.Emp_name}}</td>
+      <td>{{row.Emp_id}}</td>
+      <td>{{row.Emp_dep}}</td>
+      <td>{{row.Ts}}</td>
+    </tr>	 
+
+   {% endfor %}
+ </table>
+
+{% endblock %}
+
+
+
+
+</body>
+</html>

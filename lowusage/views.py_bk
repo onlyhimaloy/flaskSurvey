@@ -1,0 +1,80 @@
+from lowusage import app
+from lowusage.form  import SurvForm
+from lowusage.models import db,HOST,EMAIL,ANSWER 
+from flask import (
+     Flask,
+     render_template,
+     request,
+     make_response,
+     url_for,
+     redirect,
+     flash
+)
+
+@app.route('/lowusage/<e_id>', methods=['GET','POST'])
+def index(e_id):
+
+  page = request.args.get('page', 1, type=int)
+  email_qr = EMAIL.query.filter(EMAIL.ID==(e_id)).first()
+  email_id = email_qr.ID
+  email = email_qr.ML
+  hostname = HOST.query.filter(HOST.Ml==(email_id)).all()
+  
+
+  lst = list()
+  for host in hostname:
+      hostnm = host.Hostname
+      st = ANSWER.query.filter(ANSWER.Hostname==(hostnm)).all()
+      lst.append((hostnm,st))
+      print(lst)
+
+ 
+  form = SurvForm()
+  form_default = SurvForm({})
+  p_hostname = request.form.get('hostname' , '')
+  if form.validate_on_submit():
+      print(request.form)
+      p_hostname = request.form.get('hostname')
+      p_ans1 = request.form.get('ans1')
+      p_ans2 = request.form.get('ans2')
+      s_id = request.headers.get('SSO_USER')
+      s_name = request.headers.get('EMPNM').encode('iso-8859-1').decode('utf-8')
+      s_dep = request.headers.get('DEPTNM').encode('iso-8859-1').decode('utf-8')
+
+
+      ans = ANSWER(Hostname=p_hostname,Ans1=p_ans1,Ans2=p_ans2,Emp_name=s_name,Emp_dep=s_dep,Emp_id=s_id )
+      print(ans)
+      #db.session.add(ans)
+      db.session.merge(ans)
+      db.session.commit()
+      s_user = request.headers.get('SSO_USER')
+      s_name = request.headers.get('EMPNM').encode('iso-8859-1').decode('utf-8')
+      s_department = request.headers.get('DEPTNM').encode('iso-8859-1').decode('utf-8')
+      print(s_name)
+      flash('data submited!')
+      return redirect('/lowusage/{}'.format(e_id))
+      
+
+  else:
+      #print(request.form)	  
+      print('not submited on validate!')
+  return render_template('index.html', 
+                          lst=lst,
+			  email=email,
+			  form=form,
+			  form_default=form_default,
+			  hostname=p_hostname,
+			  )
+                                     
+
+
+@app.route('/', methods=['GET'])
+def dashboard():
+
+  page = request.args.get('page', 1, type=int)
+  pagination = ANSWER.query.paginate(page=page,per_page=10,error_out=False)
+      	  
+  return render_template('dashboard.html', pagination=pagination)
+
+
+

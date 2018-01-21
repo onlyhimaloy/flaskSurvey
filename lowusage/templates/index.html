@@ -1,0 +1,148 @@
+<html>
+<head>
+<meta charset ='utf-8'>
+<link rel="stylesheet" href="../static/css/main.css">
+{% extends "bootstrap/base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% import "_pagination.html" as macros  %}
+
+{% block title %}Low usage Server Survey {% endblock %}
+
+
+{% block navbar %}
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container">
+            <a class="navbar-brand" href="#"> LOW Usage Server List</a>
+        </div>
+    </nav>
+{% endblock %}
+
+</head>
+
+<body>
+{% block content %}
+
+
+  <h4>Group Address : {{email}}</div></h4>
+
+
+    {% for message in get_flashed_messages() %}
+           <div class="alert alert-success">
+               {{ message }}
+            </div>
+    {% endfor %}
+
+<div class="pagination">
+  {{macros.pagination_widget(pagination, '.index', e_id=e_id)}}
+</div>
+
+
+{# Table starts from here #}
+
+<table class="table table-hover">
+
+  <tr>
+      <th>Hostname</th>
+      <th>ServerGroup</th>
+      <th>SurveyStatus</th>
+      <th>Answer</th>
+  </tr>
+
+  <tr>
+    {% for row in pagination.items %}
+   
+           {# 1. Hostanme  #}
+           <td class="col-md-1">
+              <div class="alert alert-info">
+              <strong>{{row.Hostname}} </strong>
+              </div>
+           </td>
+
+          {# 2. Server Group  #}
+           <td class="col-md-2">
+             {{row.Server_Group}} 
+           </td>
+
+          {# 3. Status  #}
+           <td class="col-md-1">
+               {%if host %}
+	       {% for ans in host %}
+                   {% if ans.Ans1 %}
+                     <div class="alert alert-success">
+                       <strong>Completed!<br>Answer is ={{ans.Ans1}}<br> Date ={{ans.Ts}}</strong>
+                     </div>
+                   {% endif %}
+                 {%endfor%}
+
+               {% else %}
+                  <div class="alert alert-danger">
+                   <strong>Survey is still Pending !</strong>
+                  </div>
+              {% endif %}     	   
+
+	   </td>
+
+          {#4. Radio answer1#}
+           <td>
+                
+	       <form method="POST" action="" >
+               {{form.hidden_tag()}}
+               {% if phostname == row.Hostname %}
+                  <div>{{form.ans1.label}}<br>
+                   {{ form.ans1 }}
+                   {% for error in form.ans1.errors %}
+                   <li style="color:red;">{{ error }}</li>
+                   {% endfor %}
+                   </div>
+
+              
+                  
+	              <div> {{form.ans2.label}} </div>
+                      <div> {{ form.ans2 }}
+                            {% for error in form.ans2.errors %}
+                            {{ error }}
+                            <li style="color:red;">{{ error }}</li>
+                            {% endfor %}
+                      </div> 
+
+               {% else %}
+
+                     <div>  {{ form_default.ans1.label }}<br>
+                            {{ form_default.ans1 }}
+                            {% for error in form_default.ans1.errors %}
+                            {{ error }}
+                            {% endfor %}
+                      <div>	   
+                     
+		     <div>  {{ form_default.ans2.label }} </div>
+                     <div>  {{ form_default.ans2 }} </div>
+                    
+                   {% for error in form_default.ans2.errors %}
+                   {{ error }}
+                   {% endfor %}
+                 
+	         {% endif%}
+	              
+          
+             <button type="submit" class="btn btn-primary">Submit</button>
+             <input type="hidden" name="phostname" value="{{row.Hostname}}" />
+             </form>
+	     
+     
+ 	        
+           </td>
+
+               
+  </tr>
+
+
+
+{% endfor %}
+</table>
+
+{% endblock %}
+
+</body>
+</html>
+
+
